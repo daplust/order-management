@@ -1,25 +1,25 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
-use App\Http\Controllers\Controller;
 use App\Models\Food;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
-class FoodController extends Controller
+class FoodController extends ApiController
 {
     public function index(): JsonResponse
     {
-        $foods = Food::all();
-        return response()->json($foods);
+        return $this->handle(function () {
+            return Food::all();
+        });
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        return $this->handle(function () use ($request) {
+            $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -34,23 +34,22 @@ class FoodController extends Controller
         }
 
         $food = Food::create($validated);
-
-        return response()->json([
-            'message' => 'Food created successfully',
-            'data' => $food
-        ], 201);
+            return $this->created($food, 'Food created successfully');
+        });
     }
 
     public function show(int $id): JsonResponse
     {
-        $food = Food::findOrFail($id);
-        return response()->json($food);
+        return $this->handle(function () use ($id) {
+            return Food::findOrFail($id);
+        });
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $food = Food::findOrFail($id);
-        $validated = $request->validate([
+        return $this->handle(function () use ($request, $id) {
+            $food = Food::findOrFail($id);
+            $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|required|numeric|min:0',
@@ -69,24 +68,21 @@ class FoodController extends Controller
         }
 
         $food->update($validated);
-
-        return response()->json([
-            'message' => 'Food updated successfully',
-            'data' => $food
-        ]);
+            return $this->success($food, 'Food updated successfully');
+        });
     }
 
     public function destroy(int $id): JsonResponse
     {
-        $food = Food::findOrFail($id);
-        if ($food->image) {
-            Storage::disk('public')->delete($food->image);
-        }
+        return $this->handle(function () use ($id) {
+            $food = Food::findOrFail($id);
+            if ($food->image) {
+                Storage::disk('public')->delete($food->image);
+            }
 
-        $food->delete();
+            $food->delete();
 
-        return response()->json([
-            'message' => 'Food deleted successfully'
-        ]);
+            return $this->success(null, 'Food deleted successfully');
+        });
     }
 }

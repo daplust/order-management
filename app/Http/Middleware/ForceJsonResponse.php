@@ -7,20 +7,21 @@ use Illuminate\Http\Request;
 
 class ForceJsonResponse
 {
+    /**
+     * Force API routes to be treated as expecting JSON and ensure responses are JSON.
+     */
     public function handle(Request $request, Closure $next)
     {
-        // Force Accept header for all API requests
         if ($request->is('api/*')) {
             $request->headers->set('Accept', 'application/json');
         }
-        
+
         $response = $next($request);
-        
-        // Force JSON response for API routes
+
         if ($request->is('api/*')) {
             $response->headers->set('Content-Type', 'application/json');
         }
-        
+
         return $response;
     }
 }

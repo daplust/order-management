@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Throwable;
+use App\Exceptions\ApiException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -43,6 +44,14 @@ class Handler extends ExceptionHandler
 
     private function handleApiException($request, Throwable $exception): JsonResponse
     {
+        if ($exception instanceof ApiException) {
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => $exception->getMessage(),
+                'errors' => $exception->getErrors(),
+            ], $exception->getStatusCode());
+        }
+
         if ($exception instanceof ValidationException) {
             return new JsonResponse([
                 'message' => 'Validation error',
@@ -93,13 +102,19 @@ class Handler extends ExceptionHandler
         ], 500);
     }
 
-    public function render($request, Throwable $exception)
+    /**
+     * Convert an authentication exception into an unauthenticated response.
+     * Ensure API routes return JSON 401 when unauthenticated.
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
     {
-        // Handle API exceptions
-        if ($request->is('api/*')) {
-            return $this->handleApiException($request, $exception);
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthenticated'
+            ], 401);
         }
 
-        return parent::render($request, $exception);
+        return redirect()->guest(route('login'));
     }
 }
