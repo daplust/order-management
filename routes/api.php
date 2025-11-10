@@ -17,19 +17,33 @@ Route::get('/test/server-error', function() {
 });
 
 // Protected routes
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::post('/logout', [AuthController::class, 'logout']);
+
+//     // Food management routes
+//     Route::prefix('foods')->group(function () {
+//         // Routes for both waiter and cashier
+//         Route::get('/', [FoodController::class, 'index'])->middleware('role:waiter|cashier');
+//         Route::get('/{food}', [FoodController::class, 'show'])->middleware('can:view-foods');
+
+//         // Routes for waiter only
+//         Route::post('/', [FoodController::class, 'store'])->middleware('can:create-foods');
+//         Route::put('/{food}', [FoodController::class, 'update'])->middleware('can:edit-foods');
+//         Route::delete('/{food}', [FoodController::class, 'destroy'])->middleware('can:delete-foods');
+//     });
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     // Food management routes (accessible by both waiter and cashier)
-    Route::middleware('role:waiter,cashier')->group(function () {
+    Route::middleware('role:waiter|cashier')->group(function () {
         Route::get('/foods', [FoodController::class, 'index']);
-        Route::get('/foods/{food}', [FoodController::class, 'show']);
+        Route::get('/foods/{id}', [FoodController::class, 'show']);
     });
     
     // Food management routes (accessible by waiter only)
     Route::middleware('role:waiter')->group(function () {
         Route::post('/foods', [FoodController::class, 'store']);
-        Route::put('/foods/{food}', [FoodController::class, 'update']);
-        Route::delete('/foods/{food}', [FoodController::class, 'destroy']);
+        Route::put('/foods/{id}', [FoodController::class, 'update']);
+        Route::delete('/foods/{id}', [FoodController::class, 'destroy']);
     });
 });

@@ -41,13 +41,15 @@ class FoodController extends Controller
         ], 201);
     }
 
-    public function show(Food $food): JsonResponse
+    public function show(int $id): JsonResponse
     {
+        $food = Food::findOrFail($id);
         return response()->json($food);
     }
 
-    public function update(Request $request, Food $food): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
+        $food = Food::findOrFail($id);
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
@@ -74,8 +76,9 @@ class FoodController extends Controller
         ]);
     }
 
-    public function destroy(Food $food): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
+        $food = Food::findOrFail($id);
         if ($food->image) {
             Storage::disk('public')->delete($food->image);
         }

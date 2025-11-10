@@ -45,7 +45,7 @@ class AuthController extends Controller
                 'user' => [
                     'name' => $user->name,
                     'email' => $user->email,
-                    'roles' => $user->roles->pluck('name')
+                    'roles' => $user->role
                 ]
             ], 200);
         } catch (ValidationException $e) {
