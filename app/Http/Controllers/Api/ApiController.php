@@ -57,10 +57,6 @@ class ApiController extends Controller
         return $this->success($data, $message, 201);
     }
 
-    /**
-     * Execute a callback and map common exceptions to standardized API responses.
-     * Returns JsonResponse directly if the callback returns one.
-     */
     protected function handle(callable $callback, int $successCode = 200): JsonResponse
     {
         try {

@@ -7,9 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class TableController extends ApiController
 {
-    /**
-     * Get all tables
-     */
+    
     public function index(): JsonResponse
     {
         return $this->handle(function () {
@@ -17,9 +15,6 @@ class TableController extends ApiController
         });
     }
 
-    /**
-     * Get all available tables
-     */
     public function available(): JsonResponse
     {
         return $this->handle(function () {

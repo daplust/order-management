@@ -144,8 +144,8 @@ return [
     */
 
     'features' => [
-        Features::registration(),
-        Features::resetPasswords(),
+        // Features::registration(), // Disabled - users should be created by admin only
+        // Features::resetPasswords(), // Disabled - password reset should be done by admin
         Features::emailVerification(),
         Features::twoFactorAuthentication([
             'confirm' => true,

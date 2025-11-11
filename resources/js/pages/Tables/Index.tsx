@@ -15,7 +15,7 @@ interface Table {
     };
 }
 
-interface DashboardProps {
+interface TablesProps {
     tables: Table[];
     stats: {
         totalTables: number;
@@ -23,24 +23,17 @@ interface DashboardProps {
         occupiedTables: number;
         runningOrders: number;
     };
-    auth: {
-        user: {
-            name: string;
-            email: string;
-            roles: Array<{ name: string }>;
-        };
-    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Table List', href: '/tables' },
 ];
 
-export default function Dashboard({ tables, stats, auth }: DashboardProps) {
+export default function Tables({ tables, stats }: TablesProps) {
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
-
-    const userRole = auth?.user?.roles?.[0]?.name || 'guest';
+    const [viewMode, setViewMode] = useState<'floor' | 'list'>('floor');
 
     const filteredTables = tables.filter((table) => {
         const matchesSearch = table.table_number.toLowerCase().includes(searchQuery.toLowerCase());
@@ -52,22 +45,16 @@ export default function Dashboard({ tables, stats, auth }: DashboardProps) {
     });
 
     const handleTableClick = (table: Table) => {
-        if (userRole === 'waiter') {
-            if (table.current_order) {
-                router.visit(`/orders/${table.current_order.id}`);
-            } else if (table.is_available) {
-                router.visit(`/orders/create?table_id=${table.id}`);
-            }
-        } else if (userRole === 'cashier') {
-            if (table.current_order) {
-                router.visit(`/orders/${table.current_order.id}`);
-            }
+        if (table.current_order) {
+            router.visit(`/orders/${table.current_order.id}`);
+        } else {
+            router.visit(`/orders/create?table_id=${table.id}`);
         }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="Table List" />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-6">
                 {/* Header Card */}
@@ -94,16 +81,29 @@ export default function Dashboard({ tables, stats, auth }: DashboardProps) {
                     <div className="px-6 py-6">
                         <div className="mb-6 flex items-center justify-between">
                             <h4 className="text-base font-semibold">Table Management</h4>
-                        </div>
-
-                        {/* Instructions for Waiter */}
-                        {userRole === 'waiter' && (
-                            <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
-                                <p className="text-sm text-blue-800 dark:text-blue-200">
-                                    💡 <strong>Quick Tip:</strong> Click on any available (green) table to create a new order, or click on an occupied table to view/manage its order.
-                                </p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setViewMode('floor')}
+                                    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                                        viewMode === 'floor'
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'border bg-background text-foreground hover:bg-muted'
+                                    }`}
+                                >
+                                    Floor Plan
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                                        viewMode === 'list'
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'border bg-background text-foreground hover:bg-muted'
+                                    }`}
+                                >
+                                    List View
+                                </button>
                             </div>
-                        )}
+                        </div>
 
                         {/* Status Filters */}
                         <div className="mb-6">
@@ -150,8 +150,8 @@ export default function Dashboard({ tables, stats, auth }: DashboardProps) {
                                     onClick={() => handleTableClick(table)}
                                     className={`flex aspect-square items-center justify-center rounded-lg text-lg font-semibold transition-all hover:scale-105 ${
                                         table.is_available
-                                            ? 'bg-green-500 text-white hover:bg-green-600'
-                                            : 'bg-gray-300 text-gray-500 opacity-60 hover:opacity-80 dark:bg-gray-700 dark:text-gray-400'
+                                            ? 'bg-muted text-muted-foreground hover:bg-muted/80'
+                                            : 'bg-slate-600 text-white hover:bg-slate-700'
                                     }`}
                                 >
                                     {table.table_number}
@@ -168,7 +168,7 @@ export default function Dashboard({ tables, stats, auth }: DashboardProps) {
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             <div className="rounded-lg border bg-background p-4">
                                 <div className="text-3xl font-bold">{stats.totalTables}</div>
-                                <div className="text-sm text-muted-foreground">Total Tables</div>
+                                <div className="text-sm text-muted-foreground">Available Tables</div>
                             </div>
                             <div className="rounded-lg border bg-background p-4">
                                 <div className="text-3xl font-bold">{stats.occupiedTables}</div>
@@ -176,7 +176,7 @@ export default function Dashboard({ tables, stats, auth }: DashboardProps) {
                             </div>
                             <div className="rounded-lg border bg-background p-4">
                                 <div className="text-3xl font-bold">{stats.runningOrders}</div>
-                                <div className="text-sm text-muted-foreground">Running Orders</div>
+                                <div className="text-sm text-muted-foreground">Running Tables</div>
                             </div>
                             <div className="rounded-lg border bg-background p-4">
                                 <div className="text-3xl font-bold">{stats.availableTables}</div>

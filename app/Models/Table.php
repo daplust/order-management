@@ -22,33 +22,35 @@ class Table extends Model
         'capacity' => 'integer'
     ];
 
-    /**
-     * Get the orders for the table
-     */
+    protected $appends = ['table_number'];
+
+    public function getTableNumberAttribute()
+    {
+        return $this->number;
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
-    /**
-     * Scope a query to only include available tables
-     */
+    public function currentOrder()
+    {
+        return $this->hasOne(Order::class)->where('status', 'open')->latest();
+    }
+
     public function scopeAvailable($query)
     {
         return $query->where('is_available', true);
     }
 
-    /**
-     * Mark the table as unavailable
-     */
+    
     public function markAsUnavailable()
     {
         $this->update(['is_available' => false]);
     }
 
-    /**
-     * Mark the table as available
-     */
+    
     public function markAsAvailable()
     {
         $this->update(['is_available' => true]);

@@ -44,6 +44,48 @@ class FoodSeeder extends Seeder
                 'price' => 7.99,
                 'type' => 'food',
                 'is_available' => true,
+            ],
+            [
+                'name' => 'Iced Coffee',
+                'description' => 'Freshly brewed coffee served over ice',
+                'price' => 4.99,
+                'type' => 'beverage',
+                'is_available' => true,
+            ],
+            [
+                'name' => 'Fresh Orange Juice',
+                'description' => 'Freshly squeezed orange juice',
+                'price' => 5.99,
+                'type' => 'beverage',
+                'is_available' => true,
+            ],
+            [
+                'name' => 'Green Tea',
+                'description' => 'Premium Japanese green tea',
+                'price' => 3.99,
+                'type' => 'beverage',
+                'is_available' => true,
+            ],
+            [
+                'name' => 'Coca Cola',
+                'description' => 'Classic Coca Cola soft drink',
+                'price' => 2.99,
+                'type' => 'beverage',
+                'is_available' => true,
+            ],
+            [
+                'name' => 'Mango Smoothie',
+                'description' => 'Creamy smoothie made with fresh mangoes',
+                'price' => 6.99,
+                'type' => 'beverage',
+                'is_available' => true,
+            ],
+            [
+                'name' => 'Mineral Water',
+                'description' => 'Refreshing mineral water',
+                'price' => 1.99,
+                'type' => 'beverage',
+                'is_available' => true,
             ]
         ];
 

@@ -9,12 +9,8 @@ use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Create some sample orders
         $tables = Table::all();
         $foods = Food::all();
 
@@ -23,14 +19,12 @@ class OrderSeeder extends Seeder
             return;
         }
 
-        // Create an open order
         $openOrder = Order::create([
             'table_id' => $tables->first()->id,
             'status' => 'open',
             'notes' => 'Test order 1 - Currently open'
         ]);
 
-        // Add some items to the open order
         $openOrder->items()->create([
             'food_id' => $foods->first()->id,
             'quantity' => 2,
@@ -48,8 +42,8 @@ class OrderSeeder extends Seeder
             ]);
         }
 
-        // Update the total amount
         $openOrder->update(['total_amount' => $openOrder->items->sum('subtotal')]);
+        $tables->first()->markAsUnavailable();
 
         // Create a closed order
         if ($tables->count() > 1) {
