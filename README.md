@@ -71,7 +71,7 @@ A comprehensive restaurant order management system built with **Laravel 12** and
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/order-management.git
+git clone https://github.com/daplust/order-management.git
 cd order-management
 ```
 
