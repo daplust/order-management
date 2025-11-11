@@ -253,8 +253,11 @@ export default function OrderDetail({ order, foods }: OrderDetailProps) {
                                     Table {order.table_number} • {new Date(order.created_at).toLocaleDateString()}
                                 </p>
                             </div>
-                            <button className="rounded-md border px-3 py-1 text-sm hover:bg-muted">
-                                Send Invoice
+                            <button 
+                                onClick={() => router.visit(`/orders/${order.id}/receipt`)}
+                                className="rounded-md border px-3 py-1 text-sm hover:bg-muted"
+                            >
+                                View Receipt
                             </button>
                         </div>
                     </div>

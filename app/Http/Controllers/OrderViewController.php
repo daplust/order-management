@@ -346,7 +346,7 @@ class OrderViewController extends Controller
         $receipt = [
             'receipt_number' => 'RCP-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
             'order_id' => $order->id,
-            'date' => $order->closed_at ?? now(),
+            'date' => ($order->closed_at ?? now())->timezone('Asia/Jakarta'),
             'table' => [
                 'number' => $order->table->number,
                 'capacity' => $order->table->capacity,
@@ -391,7 +391,7 @@ class OrderViewController extends Controller
             $receipt = [
                 'receipt_number' => 'RCP-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
                 'order_id' => $order->id,
-                'date' => $order->closed_at ?? now(),
+                'date' => ($order->closed_at ?? now())->timezone('Asia/Jakarta'),
                 'table' => [
                     'number' => $order->table->number,
                     'capacity' => $order->table->capacity,
